@@ -9,8 +9,14 @@ import {
   IconSquad,
   IconGear,
   IconChevron,
+  IconBook,
+  IconUser,
+  IconBack,
+  GhostBtn,
+  PanelTitle,
 } from "../components/ui";
 import { sfx } from "../game/audio";
+import { type Language, loadLanguage, saveLanguage, getTranslation } from "../game/i18n";
 
 export type ScreenId =
   | "menu"
@@ -20,22 +26,22 @@ export type ScreenId =
   | "cup"
   | "teams"
   | "players"
-  | "settings";
+  | "settings"
+  | "help"
+  | "about";
 
-const MENU: {
-  id: ScreenId;
-  num: string;
-  title: string;
-  desc: string;
-  icon: React.ReactNode;
-}[] = [
-  { id: "select", num: "01", title: "PLAY MATCH", desc: "CHOOSE YOUR TEAMS", icon: <IconPlay className="w-[18px] h-[18px]" /> },
-  { id: "career", num: "02", title: "CAREER", desc: "BUILD YOUR LEGACY", icon: <IconCalendar className="w-[18px] h-[18px]" /> },
-  { id: "cup", num: "03", title: "TOURNAMENT", desc: "COMPETE FOR THE CUP", icon: <IconTrophy className="w-[18px] h-[18px]" /> },
-  { id: "teams", num: "04", title: "CLUBS", desc: "TEAMS • KITS • RATINGS", icon: <IconShield className="w-[18px] h-[18px]" /> },
-  { id: "players", num: "05", title: "PLAYERS", desc: "STAR MEN OF THE LEAGUE", icon: <IconSquad className="w-[18px] h-[18px]" /> },
-  { id: "settings", num: "06", title: "SETTINGS", desc: "GAME • SOUND • CONTROLS", icon: <IconGear className="w-[18px] h-[18px]" /> },
-];
+function getMenuItems(t: ReturnType<typeof useTranslation>) {
+  return [
+    { id: "select" as ScreenId, num: "01", title: t.playMatch, desc: t.chooseTeams, icon: <IconPlay className="w-[18px] h-[18px]" /> },
+    { id: "career" as ScreenId, num: "02", title: t.career, desc: t.buildLegacy, icon: <IconCalendar className="w-[18px] h-[18px]" /> },
+    { id: "cup" as ScreenId, num: "03", title: t.tournament, desc: t.competeForCup, icon: <IconTrophy className="w-[18px] h-[18px]" /> },
+    { id: "teams" as ScreenId, num: "04", title: t.clubs, desc: t.teamsKitsRatings, icon: <IconShield className="w-[18px] h-[18px]" /> },
+    { id: "players" as ScreenId, num: "05", title: t.players, desc: t.starMenOfLeague, icon: <IconSquad className="w-[18px] h-[18px]" /> },
+    { id: "settings" as ScreenId, num: "06", title: t.settings, desc: t.gameSoundControls, icon: <IconGear className="w-[18px] h-[18px]" /> },
+    { id: "help" as ScreenId, num: "07", title: t.help, desc: t.howToPlay, icon: <IconBook className="w-[18px] h-[18px]" /> },
+    { id: "about" as ScreenId, num: "08", title: t.about, desc: t.aboutDeveloper, icon: <IconUser className="w-[18px] h-[18px]" /> },
+  ];
+}
 
 // deterministic pseudo-random for ambient particles
 const prand = (i: number, salt: number) => {
@@ -142,20 +148,31 @@ export default function MainMenu({
   career: CareerState | null;
   cup: CupState | null;
 }) {
+  const [lang, setLang] = useState<Language>(() => loadLanguage());
   const [hovered, setHovered] = useState<string | null>(null);
+  const t = getTranslation(lang);
+  const menuItems = getMenuItems(t);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const idx = ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6"].indexOf(e.code);
-      if (idx >= 0) {
+      const idx = ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8"].indexOf(e.code);
+      if (idx >= 0 && idx < menuItems.length) {
         sfx.ensure();
         sfx.play("select");
-        onNav(MENU[idx].id);
+        onNav(menuItems[idx].id);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onNav]);
+  }, [onNav, menuItems]);
+
+  const toggleLanguage = () => {
+    const nextLang: Language = lang === "en" ? "fa" : "en";
+    setLang(nextLang);
+    saveLanguage(nextLang);
+    sfx.ensure();
+    sfx.play("click");
+  };
 
   const ticker = useMemo(() => {
     const items: string[] = [];
@@ -266,7 +283,7 @@ export default function MainMenu({
             </div>
 
             <nav className="mt-10 lg:mt-12 border-t border-line/70">
-              {MENU.map((m, i) => {
+              {menuItems.map((m, i) => {
                 const active = hovered === m.id;
                 return (
                   <button
@@ -332,10 +349,17 @@ export default function MainMenu({
               })}
             </nav>
 
-            <div className="mt-6 flex items-center gap-4 font-cond text-[11px] tracking-[0.25em] text-dim">
-              <span>PRESS 1–6 TO NAVIGATE</span>
+            <div className="mt-6 flex flex-wrap items-center gap-4 font-cond text-[11px] tracking-[0.25em] text-dim">
+              <span>{t.press} 1–8 {t.toNavigate}</span>
               <span className="w-1 h-1 bg-line rounded-full" />
-              <span>KEYBOARD + TOUCH</span>
+              <span>{t.keyboardTouch}</span>
+              <span className="flex-1" />
+              <button
+                onClick={toggleLanguage}
+                className="tag-clip bg-panel2 border border-line text-fog hover:text-cyan hover:border-electric font-cond font-semibold text-sm tracking-[0.18em] px-3 py-1 transition-colors cursor-pointer"
+              >
+                {lang === "en" ? "EN | فارسی" : "EN | FA"}
+              </button>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import TeamSelect from "./screens/TeamSelect";
 import MatchScreen from "./screens/MatchScreen";
 import CareerScreen from "./screens/CareerScreen";
 import CupScreen from "./screens/CupScreen";
-import { TeamsScreen, PlayersScreen, SettingsScreen } from "./screens/InfoScreens";
+import { TeamsScreen, PlayersScreen, SettingsScreen, HelpScreen, AboutScreen } from "./screens/InfoScreens";
 import {
   DEFAULT_SETTINGS,
   loadJSON,
@@ -246,6 +246,12 @@ export default function App() {
       content = (
         <SettingsScreen settings={settings} onChange={patchSettings} onBack={() => setScreen("menu")} />
       );
+      break;
+    case "help":
+      content = <HelpScreen onBack={() => setScreen("menu")} />;
+      break;
+    case "about":
+      content = <AboutScreen onBack={() => setScreen("menu")} />;
       break;
   }
 
