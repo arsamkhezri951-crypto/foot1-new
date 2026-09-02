@@ -85,6 +85,20 @@ export const IconKeys = ({ className = "w-5 h-5" }: IconProps) => (
   </svg>
 );
 
+export const IconBook = ({ className = "w-5 h-5" }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
+    <path d="M4 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2V5z" />
+    <path d="M4 13h13" />
+  </svg>
+);
+
+export const IconUser = ({ className = "w-5 h-5" }: IconProps) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+  </svg>
+);
+
 // ------------------------------------------------------------------
 // Kit disc — procedural striped shirt badge
 // ------------------------------------------------------------------

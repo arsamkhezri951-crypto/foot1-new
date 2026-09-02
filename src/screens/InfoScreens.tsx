@@ -8,6 +8,7 @@ import {
 } from "../game/data";
 import { KitDisc, GhostBtn, PanelTitle, IconBack } from "../components/ui";
 import { sfx } from "../game/audio";
+import { type Language, getTranslation } from "../game/i18n";
 
 const POS_COLOR: Record<string, string> = {
   GK: "#FEBE10",
@@ -179,6 +180,196 @@ export function PlayersScreen({ onBack }: { onBack: () => void }) {
         </div>
         <p className="font-cond text-dim tracking-[0.2em] text-sm mt-4">
           GOAL SCORERS ON MATCH NIGHT ARE DRAWN FROM THESE STAR MEN.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------
+// HELP SCREEN
+// ------------------------------------------------------------------
+
+export function HelpScreen({ onBack }: { onBack: () => void }) {
+  const [lang, setLang] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('cn_language_v1');
+      return (saved === 'en' || saved === 'fa') ? saved : 'en';
+    } catch {
+      return 'en';
+    }
+  });
+  const t = getTranslation(lang);
+
+  return (
+    <div className="h-full overflow-y-auto screen-in">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <PanelTitle>{t.help}</PanelTitle>
+          <GhostBtn onClick={onBack}>
+            <IconBack className="w-4 h-4" /> {t.back}
+          </GhostBtn>
+        </div>
+
+        <div className="bg-panel border border-line p-6 mb-6">
+          <h3 className="font-display text-2xl text-cyan tracking-[0.1em] mb-4">{t.howToPlay}</h3>
+          
+          <div className="space-y-4 font-cond text-sm tracking-wide text-fog">
+            <div>
+              <h4 className="font-bold text-white mb-2">{t.objective}</h4>
+              <p className={lang === 'fa' ? 'text-right' : 'text-left'} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+                {lang === 'fa' 
+                  ? 'هدف بازی گل زدن بیشتر از حریف است. شما کنترل یکی از تیم‌ها را دارید و باید با استفاده از پاس و شوت به دروازه حریف حمله کنید.'
+                  : 'Score more goals than your opponent. You control one team and must attack the opponent\'s goal using passes and shots.'}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-white mb-2">{t.startGame}</h4>
+              <p className={lang === 'fa' ? 'text-right' : 'text-left'} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+                {lang === 'fa'
+                  ? 'از منوی اصلی، گزینه "شروع بازی" را انتخاب کنید، سپس تیم خود و حریف را انتخاب کرده و دکمه "شروع" را بزنید.'
+                  : 'From the main menu, select "Play Match", choose your team and opponent, then press "Kick Off".'}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-white mb-2">{t.keyboardControls}</h4>
+              <div className={lang === 'fa' ? 'text-right' : 'text-left'} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+                <ul className="list-disc list-inside space-y-1">
+                  {lang === 'fa' ? (
+                    <>
+                      <li><span className="text-cyan">Arrow Keys / WASD</span> — حرکت بازیکن</li>
+                      <li><span className="text-cyan">X / K</span> — پاس / تعویض بازیکن</li>
+                      <li><span className="text-cyan">Z / L</span> — شوت / تکل</li>
+                      <li><span className="text-cyan">Space</span> — دویدن (وقتی توپ را دارید)</li>
+                      <li><span className="text-cyan">P / Escape</span> — توقف / ادامه</li>
+                    </>
+                  ) : (
+                    <>
+                      <li><span className="text-cyan">Arrow Keys / WASD</span> — Player movement</li>
+                      <li><span className="text-cyan">X / K</span> — Pass / Switch player</li>
+                      <li><span className="text-cyan">Z / L</span> — Shoot / Tackle</li>
+                      <li><span className="text-cyan">Space</span> — Sprint (when you have the ball)</li>
+                      <li><span className="text-cyan">P / Escape</span> — Pause / Resume</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-white mb-2">{t.touchControls}</h4>
+              <p className={lang === 'fa' ? 'text-right' : 'text-left'} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+                {lang === 'fa'
+                  ? 'در موبایل، از دکمه‌های لمسی روی صفحه برای حرکت، پاس و شوت استفاده کنید. دکمه‌ها بزرگ و مناسب لمس هستند.'
+                  : 'On mobile, use the on-screen touch buttons for movement, passing and shooting. Buttons are large and touch-friendly.'}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-white mb-2">{t.pauseResume}</h4>
+              <p className={lang === 'fa' ? 'text-right' : 'text-left'} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+                {lang === 'fa'
+                  ? 'در حین بازی می‌توانید با دکمه Pause بازی را متوقف کرده و با Resume ادامه دهید. گزینه Restart بازی را از اول شروع می‌کند.'
+                  : 'During match, use Pause button to stop the game and Resume to continue. Restart begins the match anew.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-panel border border-line p-6">
+          <h3 className="font-display text-2xl text-cyan tracking-[0.1em] mb-4">{t.menuGuide}</h3>
+          
+          <div className="space-y-3 font-cond text-sm tracking-wide text-fog">
+            {[
+              { key: 'playMatch', desc: lang === 'fa' ? 'شروع یک بازی دوستانه با انتخاب تیم‌ها' : 'Start a friendly match by selecting teams' },
+              { key: 'career', desc: lang === 'fa' ? 'حالت حرفه‌ای - یک فصل کامل بازی کنید و جدول لیگ را دنبال کنید' : 'Career mode - Play a full season and follow the league table' },
+              { key: 'tournament', desc: lang === 'fa' ? 'جام حذفی - از یک چهارم نهایی تا فینال رقابت کنید' : 'Cup tournament - Compete from quarter-finals to the final' },
+              { key: 'clubs', desc: lang === 'fa' ? 'مشاهده اطلاعات باشگاه‌ها، کیت‌ها و امتیازات' : 'View club information, kits and ratings' },
+              { key: 'players', desc: lang === 'fa' ? 'مشاهده ستارگان هر تیم و امتیازات آن‌ها' : 'View star players of each team and their ratings' },
+              { key: 'settings', desc: lang === 'fa' ? 'تنظیمات بازی شامل زمان، سطح هوش مصنوعی، صدا و لرزش صفحه' : 'Game settings including clock, AI difficulty, sound and screen shake' },
+              { key: 'help', desc: lang === 'fa' ? 'این صفحه راهنما' : 'This help page' },
+              { key: 'about', desc: lang === 'fa' ? 'درباره سازنده بازی' : 'About the game developer' },
+            ].map((item) => (
+              <div key={item.key} className="flex gap-3">
+                <span className="text-cyan font-bold min-w-[120px]">{t[item.key as keyof typeof t]}</span>
+                <span className="flex-1">{item.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------
+// ABOUT SCREEN
+// ------------------------------------------------------------------
+
+export function AboutScreen({ onBack }: { onBack: () => void }) {
+  const [lang, setLang] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('cn_language_v1');
+      return (saved === 'en' || saved === 'fa') ? saved : 'en';
+    } catch {
+      return 'en';
+    }
+  });
+  const t = getTranslation(lang);
+
+  return (
+    <div className="h-full overflow-y-auto screen-in">
+      <div className="max-w-2xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-8">
+          <PanelTitle>{t.about}</PanelTitle>
+          <GhostBtn onClick={onBack}>
+            <IconBack className="w-4 h-4" /> {t.back}
+          </GhostBtn>
+        </div>
+
+        <div className="bg-panel border border-line p-8 text-center">
+          <div className="mb-6">
+            <svg viewBox="0 0 100 100" className="w-24 h-24 mx-auto mb-4">
+              <circle cx="50" cy="50" r="48" fill="#0a1628"/>
+              <circle cx="50" cy="50" r="38" fill="url(#ballGrad)" filter="url(#shadow)"/>
+              <defs>
+                <linearGradient id="ballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{stopColor:'#ffffff'}}/>
+                  <stop offset="100%" style={{stopColor:'#d0d0d0'}}/>
+                </linearGradient>
+                <filter id="shadow">
+                  <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.4"/>
+                </filter>
+              </defs>
+              <path d="M50 28 L56 40 L44 40 Z" fill="#1a1a2e"/>
+              <path d="M50 72 L56 60 L44 60 Z" fill="#1a1a2e"/>
+              <path d="M28 50 L40 44 L40 56 Z" fill="#1a1a2e"/>
+              <path d="M72 50 L60 44 L60 56 Z" fill="#1a1a2e"/>
+              <circle cx="50" cy="50" r="44" fill="none" stroke="#00e5ff" strokeWidth="2" opacity="0.6"/>
+            </svg>
+          </div>
+
+          <h2 className={`font-display text-3xl text-white tracking-[0.1em] mb-4 ${lang === 'fa' ? '' : ''}`} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+            {t.aboutDeveloper}
+          </h2>
+
+          <div className={`space-y-3 font-cond text-lg tracking-wide text-fog ${lang === 'fa' ? 'text-right' : 'text-left'}`} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+            <p className="text-white">{t.aboutText1}</p>
+            <p>{t.aboutText2}</p>
+            
+            <div className="pt-6 mt-6 border-t border-line">
+              <p className="text-cyan font-bold tracking-[0.15em] mb-2">{t.teacherContact}</p>
+              <p className="text-2xl font-display text-white tracking-wider">00971551544988</p>
+            </div>
+          </div>
+        </div>
+
+        <p className={`font-cond text-dim tracking-[0.2em] text-sm mt-6 ${lang === 'fa' ? 'text-right' : 'text-left'}`} dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+          {lang === 'fa'
+            ? 'ساخته شده با عشق به فوتبال'
+            : 'Made with love for football'}
         </p>
       </div>
     </div>
